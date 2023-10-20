@@ -16,7 +16,7 @@ model Doctor {
   email          String   @unique
   specialization String? 
   gender         Gender
-  phoneNumber    String   @unique
+  phoneNumber    String   
   password       String
   reports        Report[]
 
