@@ -23,11 +23,13 @@ model Doctor {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  @@map("reports")
+
 }
 
 model Report {
   id            String            @id @default(cuid())
-  doctorsID     String
+  userId        String
   patientName   String 
   age           Int
   hospitalName  String
@@ -38,10 +40,12 @@ model Report {
   bloodPressure String
   HIV_Status    HIVStatus?
   hepatitis     HepatitisStatus?
-  doctor        Doctor            @relation(fields: [doctorsID], references: [id])
+  doctor        Doctor            @relation(fields: [userId], references: [id])
 
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
+
+  @@map("doctors")
 }
 
 enum Gender {
