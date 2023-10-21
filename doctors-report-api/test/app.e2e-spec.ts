@@ -5,7 +5,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { PrismaService } from '../src/Prisma/prisma.service';
 import { AuthDto, SigninDto } from 'src/Auth/dto';
 import { EditProfileDto } from 'src/Doctor/dto';
-import { CreateReportDto } from 'src/Reports/dto';
+import { CreateReportDto, EditReportDto } from 'src/Reports/dto';
 
 describe('Doctors Report Test', () => {
   let app: INestApplication;
@@ -164,7 +164,8 @@ describe('Doctors Report Test', () => {
           .post('/report')
           .withHeaders({ Authorization: 'Bearer $S{token}' })
           .withBody(dto)
-          .expectStatus(201);
+          .expectStatus(201)
+          .stores('reportId', 'id');
       });
     });
     describe('It should get reports', () => {
@@ -181,8 +182,97 @@ describe('Doctors Report Test', () => {
           .get('/report')
           .withHeaders({ Authorization: 'Bearer $S{token}' })
           .expectStatus(200)
-          .inspect()
           .expectJsonLength(1);
+      });
+    });
+    describe('It should get report by id', () => {
+      it('should throw error if not logged in', () => {
+        return pactum
+          .spec()
+          .get('/report/{id}')
+          .withPathParams('id', '$S{reportId}')
+          .withHeaders({ Authorization: 'Bearer $S{}' })
+          .expectStatus(401);
+      });
+      it('should throw error if report not found', () => {
+        return pactum
+          .spec()
+          .get('/report/{id}')
+          .withPathParams('id', '$S{}')
+          .withHeaders({ Authorization: 'Bearer $S{token}' })
+          .expectStatus(404);
+      });
+      it('should get report', () => {
+        return pactum
+          .spec()
+          .get('/report/{id}')
+          .withPathParams('id', '$S{reportId}')
+          .withHeaders({ Authorization: 'Bearer $S{token}' })
+          .expectStatus(200);
+      });
+    });
+    describe('It should update report', () => {
+      const dto: EditReportDto = {
+        HIV_Status: 'Positive',
+        hepatitis: 'Negative',
+      };
+      it('should throw error if not logged in', () => {
+        return pactum
+          .spec()
+          .patch('/report/{id}')
+          .withPathParams('id', '$S{reportId}')
+          .withHeaders({ Authorization: 'Bearer $S{}' })
+          .expectStatus(401);
+      });
+      it('should throw error if report not found', () => {
+        return pactum
+          .spec()
+          .patch('/report/{id}')
+          .withPathParams('id', '$S{}')
+          .withHeaders({ Authorization: 'Bearer $S{token}' })
+          .expectStatus(404);
+      });
+      it('Should update report', () => {
+        return pactum
+          .spec()
+          .patch('/report/{id}')
+          .withPathParams('id', '$S{reportId}')
+          .withHeaders({ Authorization: 'Bearer $S{token}' })
+          .withBody(dto)
+          .expectStatus(200);
+      });
+    });
+    describe('It should delete report', () => {
+      it('should throw error if not logged in', () => {
+        return pactum
+          .spec()
+          .delete('/report/{id}')
+          .withPathParams('id', '$S{reportId}')
+          .withHeaders({ Authorization: 'Bearer $S{}' })
+          .expectStatus(401);
+      });
+      it('should throw error if report not found', () => {
+        return pactum
+          .spec()
+          .delete('/report/{id}')
+          .withPathParams('id', '$S{}')
+          .withHeaders({ Authorization: 'Bearer $S{token}' })
+          .expectStatus(404);
+      });
+      it('should delete report', () => {
+        return pactum
+          .spec()
+          .delete('/report/{id}')
+          .withHeaders({ Authorization: 'Bearer $S{token}' })
+          .withPathParams('id', '$S{reportId}')
+          .expectStatus(204);
+      });
+      it('Should get empty report on successful deletion', () => {
+        return pactum
+          .spec()
+          .get('/report')
+          .withHeaders({ Authorization: 'Bearer $S{token}' })
+          .expectBodyContains([]);
       });
     });
   });

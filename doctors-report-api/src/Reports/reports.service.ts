@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../Prisma/prisma.service';
-import { CreateReportDto } from './dto';
+import { CreateReportDto, EditReportDto } from './dto';
 
 @Injectable({})
 export class ReportsService {
@@ -39,5 +39,46 @@ export class ReportsService {
       throw new UnauthorizedException({
         message: 'You dont have access to this report',
       });
+    return report;
+  }
+
+  async updateReport(userId: string, reportId: string, dto: EditReportDto) {
+    let report = await this.prisma.report.findUnique({
+      where: {
+        id: reportId,
+      },
+    });
+    if (!report) throw new NotFoundException({ message: 'Report not found' });
+    if (report.userId !== userId)
+      throw new UnauthorizedException({
+        message: 'Not authorized to update this report',
+      });
+    report = await this.prisma.report.update({
+      where: {
+        id: reportId,
+      },
+      data: {
+        ...dto,
+      },
+    });
+    return { message: 'Report updated successfully', report };
+  }
+  async deleteReport(userId, reportId) {
+    const report = await this.prisma.report.findFirst({
+      where: {
+        id: reportId,
+      },
+    });
+    if (!report) throw new NotFoundException({ message: 'Report not found' });
+    if (report.userId !== userId)
+      throw new UnauthorizedException({
+        message: 'Not authorized to delete this report',
+      });
+    await this.prisma.report.delete({
+      where: {
+        id: reportId,
+      },
+    });
+    return { message: 'Report deleted successfully' };
   }
 }

@@ -4,41 +4,41 @@ import { HIVStatus, HepatitisStatus, Genotype } from '@prisma/client';
 export class EditReportDto {
   @IsOptional()
   @IsString()
-  patientName: string;
+  patientName?: string;
 
   @IsNumber()
   @IsOptional()
-  age: number;
+  age?: number;
 
   @IsString()
   @IsOptional()
-  hospitalName: string;
+  hospitalName?: string;
 
   @IsNumber()
   @IsOptional()
-  weightKg: number;
+  weightKg?: number;
 
   @IsNumber()
   @IsOptional()
-  heightCm: number;
+  heightCm?: number;
 
   @IsString()
   @IsOptional()
-  bloodGroup: string;
+  bloodGroup?: string;
 
   @IsEnum(Genotype)
   @IsOptional()
-  genotype: Genotype;
+  genotype?: Genotype;
 
   @IsString()
   @IsOptional()
-  bloodPressure: string;
+  bloodPressure?: string;
 
   @IsEnum(HIVStatus)
   @IsOptional()
-  HIV_Status: HIVStatus;
+  HIV_Status?: HIVStatus;
 
   @IsEnum(HepatitisStatus)
   @IsOptional()
-  hepatitis: HepatitisStatus;
+  hepatitis?: HepatitisStatus;
 }

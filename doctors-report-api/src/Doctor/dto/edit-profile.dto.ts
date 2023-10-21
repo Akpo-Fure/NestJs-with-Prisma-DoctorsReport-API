@@ -3,20 +3,20 @@ import { IsEmail, IsEnum, IsOptional, IsPhoneNumber } from 'class-validator';
 
 export class EditProfileDto {
   @IsOptional()
-  doctorsName: string;
+  doctorsName?: string;
 
   @IsOptional()
   @IsPhoneNumber('NG')
-  phoneNumber: string;
+  phoneNumber?: string;
 
   @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
   @IsOptional()
   @IsEnum(Gender)
-  gender: Gender;
+  gender?: Gender;
 
   @IsOptional()
-  specialization: string;
+  specialization?: string;
 }
